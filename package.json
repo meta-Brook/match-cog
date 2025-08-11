@@ -8,7 +8,8 @@
     "start": "vite",
     "build": "tsc && vite build",
     "serve": "vite preview",
-    "test": "npm run build && npx playwright test",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
     "test:integration-update": "npx playwright test --update-snapshots"
   },
   "repository": {},
@@ -23,12 +24,18 @@
   "bugs": {},
   "homepage": "",
   "dependencies": {
-    "excalibur": "0.30.3"
+    "excalibur": "0.30.3",
+    "loupe": "^3.1.4"
   },
   "devDependencies": {
     "@playwright/test": "^1.49.1",
     "@types/node": "^22.10.2",
+    "@vitest/ui": "^3.2.4",
+    "canvas": "^3.1.2",
+    "happy-dom": "^18.0.1",
+    "jsdom": "^26.1.0",
     "typescript": "5.8.3",
-    "vite": "6.3.5"
+    "vite": "6.3.5",
+    "vitest": "^3.2.4"
   }
 }

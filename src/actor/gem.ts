@@ -1,4 +1,4 @@
-import { Actor, Collider, CollisionContact, Engine, Side, vec } from "excalibur";
+import { Actor, Collider, CollisionContact, Engine, Side,} from "excalibur";
 import { Resources } from "../resources";
 
 // Actors are the main unit of composition you'll likely use, anything that you want to draw and move around the screen
@@ -16,22 +16,18 @@ import { Resources } from "../resources";
 const colorKeys = ["Blue", "Green", "Red", "Yellow", "Purple", "Grey"] as const;
 
 export class Gem extends Actor {
-    public gemColor: keyof typeof Resources;
-
+  public gemColor: (typeof colorKeys)[number];
+  public row: number;
+  public col: number;
+  
   constructor() {
     super({
       name: 'Gem',
-      pos: vec(0, 0), // Position will be set in the scene
-      width: 64, // Assuming each gem is 64x64 pixels
-      height: 64, // Assuming each gem is 64x64 pixels
-      anchor: vec(0.5, 0.5), // Center the gem's collider and graphics
-      collisionType: 'Passive', // Passive means this does not participate in collisions
- 
     });
     
-    this.gemColor = colorKeys[Math.floor(Math.random() * colorKeys.length)];
-    
-    this.name = `${this.gemColor}`;
+    this.gemColor = '' as (typeof colorKeys)[number];
+    this.row = 0;
+    this.col = 0; 
 
   }
 
@@ -44,8 +40,8 @@ export class Gem extends Actor {
     // 3. Deferring logic to run time instead of constructor time
     // 4. Lazy instantiation
     
-    
-    this.graphics.add(Resources[this.gemColor].toSprite());
+    this.gemColor = colorKeys[Math.floor(Math.random() * colorKeys.length)];
+    this.graphics.use(Resources[this.gemColor].toSprite());
 
     // Actions are useful for scripting common behavior, for example patrolling enemies
 

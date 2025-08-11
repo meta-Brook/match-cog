@@ -31,6 +31,7 @@ export default defineConfig({
         // Vite uses rollup currently for prod builds so a separate config is needed
         // to keep vite from bundling ESM together with commonjs
         rollupOptions: {
+            external: [/\/tests\//],
             output: {
                 format: 'umd'
             }
