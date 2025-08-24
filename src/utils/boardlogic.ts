@@ -93,13 +93,39 @@ export class BoardLogic {
        return false;
     }
 
-    public static findMoves(board: Gameboard,){
-        for(let row = 0; row < board.field.length; row++){
-            for(let col = 0; col < board.field[0].length; col++){
+    public static findMoves(board: Gameboard): Map<string, Coordinates[]> {
+        let moves = new Map<string, Coordinates[]>();
 
+
+
+        //for every element in the gamebord
+        for (let row = 0; row < board.field.length; row++) {
+            for (let col = 0; col < board.field[0].length; col++) {
+
+                const key: string = `${row},${col}`;
+
+                //check if swapping the element right or down will make a match
+                if (row + 1 < board.field[0].length && this.isValidSwap(board, board.field[row][col], board.field[row + 1][col])) {
+                    //if it does match, add it to moves.
+                    const co2: Coordinates = { row: row + 1, col: col };
+                    if (!moves.has(key)) {
+                        moves.set(key, []);
+                    }
+                    moves.get(key)?.push(co2);
+
+                };
+                if (col + 1 < board.field.length && this.isValidSwap(board, board.field[row][col], board.field[row][col + 1])) {
+                    //if it does match, add it to moves.
+                    const co2: Coordinates = { row: row, col: col + 1 };
+                    if (!moves.has(key)) {
+                        moves.set(key, []);
+                    }
+                    moves.get(key)?.push(co2);
+
+                };
             }
         }
-    
+        return moves;
     }
 
 
