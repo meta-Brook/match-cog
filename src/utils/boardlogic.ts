@@ -1,7 +1,7 @@
 import { Gem } from "../actor/gem";
 import { Gameboard } from "../actor/gameboard";
 
-interface Coordinates { col: number; row: number; };
+export interface Coordinates { col: number; row: number; };
 
 export class BoardLogic {
     public static findMatches(gemColorMatrix: (string | null)[][]): Coordinates[][] {

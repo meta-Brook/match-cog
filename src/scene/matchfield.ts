@@ -1,21 +1,41 @@
 import { DefaultLoader, Engine, ExcaliburGraphicsContext, Scene, SceneActivationContext } from "excalibur";
-import { Gem } from "../actor/gem";
+import { Gameboard } from "../actor/gameboard";
 
 export class Matchfield extends Scene {
     override onInitialize(engine: Engine): void {
         // Scene.onInitialize is where we recommend you perform the composition for your game
+        console.log('board');
+
+        let gameboard = new Gameboard(8,8);
+
+        this.repositonGameboard(gameboard,engine);
+
+        this.add(gameboard);
+
+        engine.on('resize',() => {
+            this.repositonGameboard(gameboard,engine);
+        })
+       
+
+    
         
-        engine.input.pointers.primary.on('down', (evt) => {
-        const gem = new Gem();
-        gem.pos = evt.worldPos.clone(); // Set the position of the gem to where the user clicked
-        this.add(gem); // Actors need to be added to a scene to be drawn
-        });
 
     }
+
+    private repositonGameboard(gameboard:Gameboard,engine:Engine) {
+        const screenWidth = engine.drawWidth;
+        const screenHeight = engine.drawHeight;
+        gameboard.pos.x = (screenWidth - gameboard.width)/2;
+        gameboard.pos.y = (screenHeight - gameboard.height)/2;
+        console.log( screenWidth,screenHeight,gameboard.width,gameboard.height)
+    }
+
 
     override onPreLoad(loader: DefaultLoader): void {
         // Add any scene specific resources to load
     }
+
+ 
 
     override onActivate(context: SceneActivationContext<unknown>): void {
         // Called when Excalibur transitions to this scene

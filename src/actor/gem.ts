@@ -1,5 +1,6 @@
 import { Actor, Collider, CollisionContact, Engine, Side,} from "excalibur";
 import { Resources } from "../resources";
+import { TILE_SIZE } from "../utils/config"
 
 // Actors are the main unit of composition you'll likely use, anything that you want to draw and move around the screen
 // is likely built with an actor
@@ -20,6 +21,7 @@ export class Gem extends Actor {
   public row: number;
   public col: number;
   
+  
   constructor() {
     super({
       name: 'Gem',
@@ -27,7 +29,7 @@ export class Gem extends Actor {
     
     this.gemColor = '' as (typeof colorKeys)[number];
     this.row = 0;
-    this.col = 0; 
+    this.col = 0;
 
   }
 
@@ -39,9 +41,12 @@ export class Gem extends Actor {
     // 2. You need excalibur to be initialized & started 
     // 3. Deferring logic to run time instead of constructor time
     // 4. Lazy instantiation
-    
+    console.log('gem');
     this.gemColor = colorKeys[Math.floor(Math.random() * colorKeys.length)];
     this.graphics.use(Resources[this.gemColor].toSprite());
+
+    this.pos.x = this.col * TILE_SIZE;
+    this.pos.y = this.row * TILE_SIZE;
 
     // Actions are useful for scripting common behavior, for example patrolling enemies
 
@@ -55,6 +60,13 @@ export class Gem extends Actor {
     });
   }
 
+
+  setPos(row:number,col:number){
+    this.row = row;
+    this.col = col;
+    this.pos.y = this.row * TILE_SIZE;
+    this.pos.x = this.col * TILE_SIZE;
+  }
   override onPreUpdate(engine: Engine, elapsedMs: number): void {
     // Put any update logic here runs every frame before Actor builtins
   }
