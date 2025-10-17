@@ -1,9 +1,11 @@
 import { Gem } from "../actor/gem";
 import { Gameboard } from "../actor/gameboard";
 
-export interface Coordinates { col: number; row: number; };
+interface Coordinates { col: number; row: number; };
 
 export class BoardLogic {
+
+    
     public static findMatches(gemColorMatrix: (string | null)[][]): Coordinates[][] {
 
 
@@ -117,6 +119,24 @@ export class BoardLogic {
                 if (col + 1 < board.field.length && this.isValidSwap(board, board.field[row][col], board.field[row][col + 1])) {
                     //if it does match, add it to moves.
                     const co2: Coordinates = { row: row, col: col + 1 };
+                    if (!moves.has(key)) {
+                        moves.set(key, []);
+                    }
+                    moves.get(key)?.push(co2);
+
+                };
+                 if (row - 1 >=0  && this.isValidSwap(board, board.field[row][col], board.field[row - 1][col])) {
+                    //if it does match, add it to moves.
+                    const co2: Coordinates = { row: row - 1, col: col };
+                    if (!moves.has(key)) {
+                        moves.set(key, []);
+                    }
+                    moves.get(key)?.push(co2);
+
+                };
+                if (col - 1 >=0 && this.isValidSwap(board, board.field[row][col], board.field[row][col - 1])) {
+                    //if it does match, add it to moves.
+                    const co2: Coordinates = { row: row, col: col - 1 };
                     if (!moves.has(key)) {
                         moves.set(key, []);
                     }

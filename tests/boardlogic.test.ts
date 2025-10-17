@@ -3,6 +3,7 @@ import { describe, it, expect } from 'vitest';
 import { BoardLogic } from '../src/utils/boardlogic';
 import { Gameboard } from '../src/actor/gameboard';
 import { Gem } from '../src/actor/gem';
+interface Coordinates { col: number; row: number; };
 
 function createTestGameboard(gemColors: (string | null)[][]): Gameboard {
   const numRows = gemColors.length;
@@ -80,4 +81,63 @@ describe('Boardlogic.isValidSwap', () => {
   });
 });
 
+describe('Boardlogic.findMoves', () => {
 
+  it('should find a valid swap', () => {
+    const gameboard = createTestGameboard([
+      ['Yellow', 'Red','Red'],
+      ['Red','Purple','Grey'],
+      ['Blue', 'Blue','Green']
+    ]);
+    
+    const swap = BoardLogic.findMoves(gameboard);
+    console.log(swap);
+    
+ const expected = new Map<string, Coordinates[]>([
+        ['0,0', [{ row: 1, col: 0 }]],
+        ['1,0', [{ row: 0, col: 0 }]]
+    ]);
+
+    expect(swap).toEqual(expected);
+  });
+
+    it('should find more swaps', () => {
+    const gameboard = createTestGameboard([
+      ['Yellow', 'Red','Red','Blue'],
+      ['Red','Purple','Grey','Blue'],
+      ['Green', 'Blue','Grey','Red'],
+      ['Blue','Green','Green','Blue']
+    ]);
+    
+    const swap = BoardLogic.findMoves(gameboard);
+    console.log(swap);
+    
+ const expected = new Map<string, Coordinates[]>([
+        ['0,0', [{ row: 1, col: 0 }]],
+        ['1,0', [{ row: 0, col: 0 }]],
+        ['2,3', [{ row: 3, col: 3 }]],
+        ['3,3', [{ row: 2, col: 3 }]],
+        ['2,0', [{ row: 3, col: 0 }]],
+        ['3,0', [{ row: 2, col: 0 }]]
+        
+    ]);
+
+    expect(swap).toEqual(expected);
+  });
+
+  it('should find no valid swap', () => {
+    const gameboard = createTestGameboard([
+      ['Yellow', 'Red','Red'],
+      ['Blue','Purple','Grey'],
+      ['Blue', 'Blue','Green']
+    ]);
+
+    const swap = BoardLogic.findMoves(gameboard);
+    
+ const expected = new Map<string, Coordinates[]>([
+    
+    ]);
+
+    expect(swap).toEqual(expected);
+  });
+});
