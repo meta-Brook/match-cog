@@ -5,17 +5,17 @@ import { Gameboard } from '../src/actor/gameboard';
 import { Gem } from '../src/actor/gem';
 interface Coordinates { col: number; row: number; };
 
-function createTestGameboard(gemColors: (string | null)[][]): Gameboard {
-  const numRows = gemColors.length;
-  const numCols = gemColors[0].length;
-  const gameboard = new Gameboard(); // No parameters needed
+function createTestGameboard(field: (string | null)[][]): Gameboard {
+  const numRows = field.length;
+  const numCols = field[0].length;
+  const gameboard = new Gameboard(numRows,numCols); 
 
   // Initialize the field array
   for (let row = 0; row < numRows; row++) {
     gameboard.field[row] = [];
     for (let col = 0; col < numCols; col++) {
-      const gem = new Gem();
-      gem.gemColor = gemColors[row][col] as any;  // Explicit type casting
+      const gem = new Gem(gameboard);
+      gem.gemColor = field[row][col] as any;  // Explicit type casting
       gem.row = row;
       gem.col = col;
       gameboard.field[row][col] = gem;
@@ -33,7 +33,9 @@ describe('BoardLogic.findMatches', () => {
       ['Red', 'Blue', 'Green']
     ];
 
-    const matches = BoardLogic.findMatches(grid);
+    const board = createTestGameboard(grid);
+
+    const matches = BoardLogic.findMatches(board.field);
     const expectedMatches = [[
       { "row": 0, "col": 0 },
       { "row": 0, "col": 1 },

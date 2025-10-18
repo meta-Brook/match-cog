@@ -1,4 +1,5 @@
-import { Actor, Collider, CollisionContact, Engine, Side,} from "excalibur";
+import { Actor, Collider, CollisionContact, Engine, Side, Vector} from "excalibur";
+import { Gameboard } from "./gameboard"
 import { Resources } from "../resources";
 import { TILE_SIZE } from "../utils/config"
 
@@ -20,16 +21,22 @@ export class Gem extends Actor {
   public gemColor: (typeof colorKeys)[number];
   public row: number;
   public col: number;
+  public gameboard:Gameboard;
+  public remove: boolean;
   
   
-  constructor() {
+  constructor(gameboard: Gameboard) {
     super({
       name: 'Gem',
+    
     });
     
+    
+    this.gameboard = gameboard;
     this.gemColor = '' as (typeof colorKeys)[number];
     this.row = 0;
     this.col = 0;
+    this.remove = false;
 
   }
 
@@ -51,21 +58,23 @@ export class Gem extends Actor {
     // Actions are useful for scripting common behavior, for example patrolling enemies
 
     // Sometimes you want to click on an actor!
-    this.on('pointerdown', evt => {
-      // Pointer events tunnel in z order from the screen down, you can cancel them!
-      // if (true) {
-      //   evt.cancel();
-      // }
-      console.log('You clicked the actor @', evt.worldPos.toString());
-    });
+   
+// subscribe to pointerdown event
+    this.on("pointerdown", (evt) =>{
+      this.gameboard.gemClick(this);
+      console.log('pd');
+  
+});
   }
 
 
-  setPos(row:number,col:number){
+  setPos(col:number,row:number){
     this.row = row;
     this.col = col;
-    this.pos.y = this.row * TILE_SIZE;
-    this.pos.x = this.col * TILE_SIZE;
+    let vect = new Vector (col * TILE_SIZE , row * TILE_SIZE)
+
+    this.actions.moveTo(vect,200)
+
   }
   override onPreUpdate(engine: Engine, elapsedMs: number): void {
     // Put any update logic here runs every frame before Actor builtins

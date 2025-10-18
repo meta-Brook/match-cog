@@ -1,15 +1,15 @@
 import { Gem } from "../actor/gem";
 import { Gameboard } from "../actor/gameboard";
 
-interface Coordinates { col: number; row: number; };
+export interface Coordinates { row: number; col: number; };
 
 export class BoardLogic {
 
     
-    public static findMatches(gemColorMatrix: (string | null)[][]): Coordinates[][] {
+    public static findMatches(field: (Gem | null)[][]): Coordinates[][] {
 
 
-        let grid: (string | null)[][] = gemColorMatrix.map(row => [...row]);
+        let grid: (Gem | null)[][] = field.map(row => [...row]);
         let matches: Coordinates[] = [];
         let matchGroup: Coordinates[][] = [];
 
@@ -59,8 +59,8 @@ export class BoardLogic {
     }
 
     public static isValidSwap(board: Gameboard, gem1: Gem, gem2: Gem): boolean {
-        const before: (string | null)[][] = board.field.map(row => row.map(gem => gem.gemColor));
-        const exMatch = this.findMatches(before);
+       
+        const exMatch = this.findMatches(board.field);
         const co1 = { col: gem1.col, row: gem1.row };
         const co2 = { col: gem2.col, row: gem2.row };
 
@@ -75,16 +75,15 @@ export class BoardLogic {
             //if that's true then check if either of the moved gems are in any matches now.
             //make a copy of gameboard color grid
 
-            let after: (string | null)[][] = before.map(row => [...row]);
 
             //swap the two gem colors
 
-            after[co1.row][co1.col] = gem2.gemColor;
-            after[co2.row][co2.col] = gem1.gemColor;
+            board.field[co1.row][co1.col].gemColor = gem2.gemColor;
+            board.field[co2.row][co2.col].gemColor = gem1.gemColor;
 
             //run findMatches on the new gem grid
 
-            let newMatch = this.findMatches(after);
+            let newMatch = this.findMatches(board.field);
 
             //if they are in a new match then its a valid swap 
 
