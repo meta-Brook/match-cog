@@ -9,7 +9,7 @@ import { Resources } from "../resources";
 import { TILE_SIZE } from "../utils/config";
 
 export class Gameboard extends Actor {
-    public field: Gem [][];
+    public field: (Gem) [][];
     public xsize: number;
     public ysize: number;
     public firstGem: Gem|null;
@@ -50,12 +50,12 @@ export class Gameboard extends Actor {
     let swapR = gem1.row;
     let swapC = gem1.col;
 
-    gem1.actions.moveTo(this.gridToPos(gem2.col,gem2.row),200);
+    gem1.setGrid(gem2.col,gem2.row)
     gem1.row = gem2.row;
     gem1.col = gem2.col;
     this.field[gem1.row][gem1.col] = gem1;
 
-    gem2.actions.moveTo(this.gridToPos(swapC,swapR),200);
+    gem2.setGrid(swapC,swapR)
     gem2.row = swapR;
     gem2.col = swapC;
     this.field[gem2.row][gem2.col] = gem2;
@@ -68,7 +68,7 @@ export class Gameboard extends Actor {
 
     
     if(this.firstGem instanceof Gem){
-      console.log("second", this.firstGem, gem)
+      console.log("second", this.firstGem.gemColor, gem.gemColor,BoardLogic.isValidSwap(this , this.firstGem , gem))
       if(BoardLogic.isValidSwap(this , this.firstGem , gem)==true){
       this.swapGems(this.firstGem,gem);
       console.log('swap')
@@ -99,35 +99,56 @@ export class Gameboard extends Actor {
   }
 
   removeMatches(){
-       for(let col = this.field[0].length ; col != 0 ; col--){
-      for(let row = this.field.length ; row != 0 ; row--){
+      
+    let matches:Coordinates[][] = BoardLogic.findMatches(this.field);
+    console.log(matches);
+
+    for(let col = 0; this.field[0].length >= col ; col++){
+      for(let row = 0 ; this.field.length >= row ; row++){
+        if(matches.some(arr=>
+          arr.some(coord => 
+            coord.col === col && coord.row === row)
+        )){
+          console.log('match');
+         
+          //this.removeGem(this.field[col][row]);
+          //this.collapseGems;
+        }
+        
+
         
       }}
 
   }
 
   removeGem(coordinates: Coordinates){
+  
 
-    const removeThis:Gem = this.field[coordinates.row][coordinates.col] ;
+    const removeThis:Gem = this.field[coordinates.col][coordinates.row];
 
     if(removeThis){
     this.scene?.remove(removeThis);
-    this.field[coordinates.row][coordinates.col].remove = true;
+    this.field[coordinates.col][coordinates.row].remove = true;
     }
-  }
+
+}
+
+
 
   collapseGems(){
-    for(let col = this.field[0].length ; col != 0 ; col--){
-      for(let row = this.field.length ; row != 0 ; row--){
+    for(let col = 0; col < this.field[0].length; col++){
+      for(let row = this.field.length ; row >= 0 ; row--){
         if(this.field[col][row].remove){
-          for(let bubble = 1 ; row - bubble > 0 ; bubble++){
+          for(let bubble = 0 ; row - bubble > 0 ; bubble++){
             this.field[col][row-bubble] = this.field[col][row-bubble-1];
-            this.field[col][row-bubble-1].setPos(col,row-bubble-1);
+            this.field[col][row-bubble-1].setGrid(col,row-bubble-1);
 
           }
-          this.field[col][0] = new Gem(this);
-          this.field[col][0].setPos(col,0);
+          const gem = new Gem(this);
+          this.field[col][0] = gem;
           
+          this.field[col][0].setGrid(col,0);
+          this.addChild(gem)
 
       }
 
@@ -148,10 +169,11 @@ export class Gameboard extends Actor {
       for(let y = 0;y < this.ysize; y++){
         const gem = new Gem(this);
         this.field[x][y]= gem;
-        this.field[x][y].setPos(x,y);
+        this.field[x][y].setGrid(x,y);
         this.addChild(gem); 
       }
     }
+    this.removeMatches();
 
 
   }

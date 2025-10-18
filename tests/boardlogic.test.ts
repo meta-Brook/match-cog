@@ -2,20 +2,24 @@
 import { describe, it, expect } from 'vitest';
 import { BoardLogic } from '../src/utils/boardlogic';
 import { Gameboard } from '../src/actor/gameboard';
-import { Gem } from '../src/actor/gem';
+import { Gem , colorKeys} from '../src/actor/gem';
+import { Resources } from '../src/resources'
 interface Coordinates { col: number; row: number; };
 
 function createTestGameboard(field: (string | null)[][]): Gameboard {
   const numRows = field.length;
   const numCols = field[0].length;
-  const gameboard = new Gameboard(numRows,numCols); 
+  const gameboard = new Gameboard(numRows, numCols);
 
   // Initialize the field array
   for (let row = 0; row < numRows; row++) {
-    gameboard.field[row] = [];
+    
     for (let col = 0; col < numCols; col++) {
       const gem = new Gem(gameboard);
-      gem.gemColor = field[row][col] as any;  // Explicit type casting
+      const index = colorKeys.findIndex(c => c = field[col][row])
+
+      gem.gemColor = colorKeys[index];
+      gem.graphics.use(Resources[gem.gemColor].toSprite());
       gem.row = row;
       gem.col = col;
       gameboard.field[row][col] = gem;
@@ -42,7 +46,7 @@ describe('BoardLogic.findMatches', () => {
       { "row": 0, "col": 2 },
     ]];
 
-    expect(matches.length).toBe(expectedMatches.length);
+    expect(matches).toEqual(expectedMatches);
 
     matches.forEach((matchGroup, index) => {
       const expectedMatchGroup = expectedMatches[index];
@@ -54,90 +58,118 @@ describe('BoardLogic.findMatches', () => {
     });
   });
   // Add more test cases for different scenarios (vertical matches, longer matches, etc.)
+  it('should find no matches', () => {
+    const gameboard = createTestGameboard([
+      ['Yellow', 'Yellow', 'Green'],
+      ['Blue', 'White', 'Green'],
+      ['White', 'Blue', 'Purple']
+    ]);
+
+    const matches = BoardLogic.findMatches(gameboard.field);
+
+    const expectedMatches = [
+
+    ];
+    expect(matches).toEqual(expectedMatches);
+  })
 });
+
 
 describe('Boardlogic.isValidSwap', () => {
 
   it('should find a valid swap', () => {
     const gameboard = createTestGameboard([
-      ['Yellow', 'Red','Red'],
-      ['Red','Purple','Grey'],
-      ['Blue', 'Blue','Green']
+      ['Yellow', 'Red', 'Red'],
+      ['Red', 'Purple', 'Grey'],
+      ['Blue', 'Blue', 'Green']
     ]);
-    
-    const swap = BoardLogic.isValidSwap(gameboard,gameboard.field[0][0],gameboard.field[1][0]);
-    
+
+    const swap = BoardLogic.isValidSwap(gameboard, gameboard.field[0][0], gameboard.field[1][0]);
+
     expect(swap).toEqual(true);
   });
 
   it('should find no valid swap', () => {
     const gameboard = createTestGameboard([
-      ['Yellow', 'Red','Red'],
-      ['Blue','Purple','Grey'],
-      ['Blue', 'Blue','Green']
+      ['Yellow', 'Red', 'Red'],
+      ['Blue', 'Purple', 'Grey'],
+      ['Blue', 'Blue', 'Green']
     ]);
 
-    const swap = BoardLogic.isValidSwap(gameboard,gameboard.field[0][0],gameboard.field[1][0]);
-    
+    const swap = BoardLogic.isValidSwap(gameboard, gameboard.field[0][0], gameboard.field[1][0]);
+
+    expect(swap).toEqual(false);
+  });
+
+  it('should find no valid swap', () => {
+    const gameboard = createTestGameboard([
+      ['Yellow', 'Yellow', 'Green'],
+      ['Blue', 'White', 'Green'],
+      ['White', 'Blue', 'Purple']
+    ]);
+
+    const swap = BoardLogic.isValidSwap(gameboard, gameboard.field[2][1], gameboard.field[1][1]);
+    console.log(swap);
+
     expect(swap).toEqual(false);
   });
 });
 
 describe('Boardlogic.findMoves', () => {
 
-  it('should find a valid swap', () => {
+  it('should find two moves', () => {
     const gameboard = createTestGameboard([
-      ['Yellow', 'Red','Red'],
-      ['Red','Purple','Grey'],
-      ['Blue', 'Blue','Green']
+      ['Yellow', 'Red', 'Red'],
+      ['Red', 'Purple', 'Grey'],
+      ['Blue', 'Blue', 'Green']
     ]);
-    
+
     const swap = BoardLogic.findMoves(gameboard);
     console.log(swap);
-    
- const expected = new Map<string, Coordinates[]>([
-        ['0,0', [{ row: 1, col: 0 }]],
-        ['1,0', [{ row: 0, col: 0 }]]
+
+    const expected = new Map<string, Coordinates[]>([
+      ['0,0', [{ row: 1, col: 0 }]],
+      ['1,0', [{ row: 0, col: 0 }]]
     ]);
 
     expect(swap).toEqual(expected);
   });
 
-    it('should find more swaps', () => {
+  it('should find 6 moves', () => {
     const gameboard = createTestGameboard([
-      ['Yellow', 'Red','Red','Blue'],
-      ['Red','Purple','Grey','Blue'],
-      ['Green', 'Blue','Grey','Red'],
-      ['Blue','Green','Green','Blue']
+      ['Yellow', 'Red', 'Red', 'Blue'],
+      ['Red', 'Purple', 'Grey', 'Blue'],
+      ['Green', 'Blue', 'Grey', 'Red'],
+      ['Blue', 'Green', 'Green', 'Blue']
     ]);
-    
+
     const swap = BoardLogic.findMoves(gameboard);
     console.log(swap);
-    
- const expected = new Map<string, Coordinates[]>([
-        ['0,0', [{ row: 1, col: 0 }]],
-        ['1,0', [{ row: 0, col: 0 }]],
-        ['2,3', [{ row: 3, col: 3 }]],
-        ['3,3', [{ row: 2, col: 3 }]],
-        ['2,0', [{ row: 3, col: 0 }]],
-        ['3,0', [{ row: 2, col: 0 }]]
-        
+
+    const expected = new Map<string, Coordinates[]>([
+      ['0,0', [{ row: 1, col: 0 }]],
+      ['1,0', [{ row: 0, col: 0 }]],
+      ['2,3', [{ row: 3, col: 3 }]],
+      ['3,3', [{ row: 2, col: 3 }]],
+      ['2,0', [{ row: 3, col: 0 }]],
+      ['3,0', [{ row: 2, col: 0 }]]
+
     ]);
 
     expect(swap).toEqual(expected);
   });
 
-  it('should find no valid swap', () => {
+  it('should find no moves', () => {
     const gameboard = createTestGameboard([
-      ['Yellow', 'Red','Red'],
-      ['Blue','Purple','Grey'],
-      ['Blue', 'Blue','Green']
+      ['Yellow', 'Red', 'Red'],
+      ['Blue', 'Purple', 'Grey'],
+      ['Blue', 'Blue', 'Green']
     ]);
 
     const swap = BoardLogic.findMoves(gameboard);
-    
- const expected = new Map<string, Coordinates[]>([
-    
+
+    const expected = new Map<string, Coordinates[]>([
+
     ]);
 
     expect(swap).toEqual(expected);

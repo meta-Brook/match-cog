@@ -15,7 +15,7 @@ import { TILE_SIZE } from "../utils/config"
 // actor.actions
 // actor.pointer
 
-const colorKeys = ["Blue", "Green", "Red", "Yellow", "Purple", "Grey"] as const;
+export const colorKeys = ["Blue", "Green", "Red", "Yellow", "Purple", "Grey"] as const;
 
 export class Gem extends Actor {
   public gemColor: (typeof colorKeys)[number];
@@ -48,7 +48,7 @@ export class Gem extends Actor {
     // 2. You need excalibur to be initialized & started 
     // 3. Deferring logic to run time instead of constructor time
     // 4. Lazy instantiation
-    console.log('gem');
+    
     this.gemColor = colorKeys[Math.floor(Math.random() * colorKeys.length)];
     this.graphics.use(Resources[this.gemColor].toSprite());
 
@@ -68,7 +68,7 @@ export class Gem extends Actor {
   }
 
 
-  setPos(col:number,row:number){
+  setGrid(col:number,row:number){
     this.row = row;
     this.col = col;
     let vect = new Vector (col * TILE_SIZE , row * TILE_SIZE)

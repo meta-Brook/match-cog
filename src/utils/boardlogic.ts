@@ -1,15 +1,18 @@
 import { Gem } from "../actor/gem";
 import { Gameboard } from "../actor/gameboard";
 
-export interface Coordinates { row: number; col: number; };
+export interface Coordinates { col: number; row: number; };
 
 export class BoardLogic {
 
-    
+
     public static findMatches(field: (Gem | null)[][]): Coordinates[][] {
+        let grid: (string)[][] = field.map(row => row.map(gem => gem ? gem.gemColor : "none"));
+        return this.gridMatches(grid);
+    }
 
+    public static gridMatches(grid: (string | null)[][]):Coordinates[][]{
 
-        let grid: (Gem | null)[][] = field.map(row => [...row]);
         let matches: Coordinates[] = [];
         let matchGroup: Coordinates[][] = [];
 
@@ -36,7 +39,7 @@ export class BoardLogic {
                     };
 
                     if (matchlengthR > 2 || matchlengthC > 2) {
-                        matches.push({ row: rows, col: cols });
+                        matches.unshift({ row: rows, col: cols });
                         matches.forEach(coord => { grid[coord.row][coord.col] = null });
                         matchGroup.push(matches);
                     };
@@ -59,31 +62,30 @@ export class BoardLogic {
     }
 
     public static isValidSwap(board: Gameboard, gem1: Gem, gem2: Gem): boolean {
+
+       
        
         const exMatch = this.findMatches(board.field);
+        console.log(exMatch);
         const co1 = { col: gem1.col, row: gem1.row };
         const co2 = { col: gem2.col, row: gem2.row };
-
+        const grid: (string)[][] = board.field.map(row => row.map(gem => gem ? gem.gemColor : 'none'));
+        
         //check if either of the moved gems are currently in any matches on the board
 
-        if (this.containsCoordinate(exMatch, co1) || this.containsCoordinate(exMatch, co2)) { return false };
+        if (this.containsCoordinate(exMatch, co1) || this.containsCoordinate(exMatch, co2)) { console.log('early');return false };
 
         //take both gems, check if row1-row2 or col1-col2 absolute value equals 1
 
         if (Math.abs(co1.row - co2.row) === 1 || Math.abs(co1.col - co2.col) === 1) {
 
-            //if that's true then check if either of the moved gems are in any matches now.
-            //make a copy of gameboard color grid
-
-
-            //swap the two gem colors
-
-            board.field[co1.row][co1.col].gemColor = gem2.gemColor;
-            board.field[co2.row][co2.col].gemColor = gem1.gemColor;
+            
+            grid[co1.row][co1.col] = gem2.gemColor;
+            grid[co2.row][co2.col] = gem1.gemColor;
 
             //run findMatches on the new gem grid
 
-            let newMatch = this.findMatches(board.field);
+            let newMatch = this.gridMatches(grid);
 
             //if they are in a new match then its a valid swap 
 

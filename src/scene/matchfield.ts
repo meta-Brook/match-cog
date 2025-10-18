@@ -1,12 +1,13 @@
 import { DefaultLoader, Engine, ExcaliburGraphicsContext, Scene, SceneActivationContext } from "excalibur";
 import { Gameboard } from "../actor/gameboard";
+import { xsize,ysize } from "../utils/config";
 
 export class Matchfield extends Scene {
     override onInitialize(engine: Engine): void {
         // Scene.onInitialize is where we recommend you perform the composition for your game
         console.log('board');
 
-        let gameboard = new Gameboard(8,8);
+        let gameboard = new Gameboard(xsize,ysize);
 
         this.repositonGameboard(gameboard,engine);
 
