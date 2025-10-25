@@ -1,15 +1,19 @@
 import { Gem } from "../actor/gem";
 import { Gameboard } from "../actor/gameboard";
 
-export interface Coordinates { col: number; row: number; };
+export interface Coordinates { row: number; col: number; };
 
 export class BoardLogic {
 
 
-    public static findMatches(field: (Gem | null)[][]): Coordinates[][] {
-        let grid: (string)[][] = field.map(row => row.map(gem => gem ? gem.gemColor : "none"));
-        return this.gridMatches(grid);
-    }
+public static findMatches(field: (Gem)[][]): Coordinates[][] {
+    let grid: (string | null)[][] = field.map(row => 
+        row.map(gem => gem.gemColor)  // Use null, not "none"
+    );
+    
+    console.log("Grid being checked:", grid);  // Debug!
+    return this.gridMatches(grid);
+}
 
     public static gridMatches(grid: (string | null)[][]):Coordinates[][]{
 
@@ -18,7 +22,7 @@ export class BoardLogic {
 
         for (let rows = 0; rows < grid.length; rows++) {
             for (let cols = 0; cols < grid[0].length; cols++) {
-                if (grid[rows][cols] != null) {
+                if (grid[rows][cols] != 'none' || null) {
 
                     let n = 1;
                     let matchlengthR = 1;
@@ -30,7 +34,14 @@ export class BoardLogic {
                         matchlengthR++
                         n++;
                     };
-                    if (matchlengthR < 3) { matches = [] };
+
+                      if (matchlengthR > 2) {
+                        matches.unshift({ row: rows, col: cols });
+                       //matches.forEach(coord => { grid[coord.row][coord.col] = null });
+                        matchGroup.push(matches);
+                    };
+
+                     matches = [];
                     n = 1;
                     while (cols + n < grid[rows].length && grid[rows][cols] === grid[rows][cols + n]) {
                         matches.push({ row: rows, col: cols + n });
@@ -38,9 +49,9 @@ export class BoardLogic {
                         n++;
                     };
 
-                    if (matchlengthR > 2 || matchlengthC > 2) {
+                    if (matchlengthC > 2) {
                         matches.unshift({ row: rows, col: cols });
-                        matches.forEach(coord => { grid[coord.row][coord.col] = null });
+                        //matches.forEach(coord => { grid[coord.row][coord.col] = null });
                         matchGroup.push(matches);
                     };
                     matches = [];

@@ -4,7 +4,7 @@ import { ImageSource, Loader } from "excalibur";
 export const Resources = {
   Sword: new ImageSource("/images/sword.png"), // Vite public/ directory serves the root images
   Blue: new ImageSource("/images/element_blue_square.png"),
-  Green: new ImageSource("/public/images/element_green_square.png"),
+  Green: new ImageSource("/images/element_green_square.png"),
   Red: new ImageSource("/images/element_red_square.png"),
   Yellow: new ImageSource("/images/element_yellow_square.png"),
   Purple: new ImageSource("/images/element_purple_square.png"),

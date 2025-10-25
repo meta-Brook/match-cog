@@ -33,7 +33,7 @@ export class Gem extends Actor {
     
     
     this.gameboard = gameboard;
-    this.gemColor = '' as (typeof colorKeys)[number];
+    this.gemColor = colorKeys[Math.floor(Math.random() * colorKeys.length)];
     this.row = 0;
     this.col = 0;
     this.remove = false;
@@ -49,7 +49,7 @@ export class Gem extends Actor {
     // 3. Deferring logic to run time instead of constructor time
     // 4. Lazy instantiation
     
-    this.gemColor = colorKeys[Math.floor(Math.random() * colorKeys.length)];
+     
     this.graphics.use(Resources[this.gemColor].toSprite());
 
     this.pos.x = this.col * TILE_SIZE;
@@ -68,7 +68,7 @@ export class Gem extends Actor {
   }
 
 
-  setGrid(col:number,row:number){
+  setGrid(row:number, col:number){
     this.row = row;
     this.col = col;
     let vect = new Vector (col * TILE_SIZE , row * TILE_SIZE)

@@ -68,7 +68,7 @@ export class Gameboard extends Actor {
 
     
     if(this.firstGem instanceof Gem){
-      console.log("second", this.firstGem.gemColor, gem.gemColor,BoardLogic.isValidSwap(this , this.firstGem , gem))
+      console.log("second", this.firstGem, gem ,BoardLogic.isValidSwap(this, this.firstGem , gem))
       if(BoardLogic.isValidSwap(this , this.firstGem , gem)==true){
       this.swapGems(this.firstGem,gem);
       console.log('swap')
@@ -99,8 +99,9 @@ export class Gameboard extends Actor {
   }
 
   removeMatches(){
-      
+      console.log(this.field);
     let matches:Coordinates[][] = BoardLogic.findMatches(this.field);
+    
     console.log(matches);
 
     for(let col = 0; this.field[0].length >= col ; col++){
@@ -164,12 +165,12 @@ export class Gameboard extends Actor {
   };
 
   public createLevel(){
-    for(let x = 0;x < this.xsize;x++){
-      this.field[x]=[];
-      for(let y = 0;y < this.ysize; y++){
+    for(let row = 0; row < this.xsize; row++){
+      this.field[row]=[];
+      for(let col = 0;col < this.ysize; col++){
         const gem = new Gem(this);
-        this.field[x][y]= gem;
-        this.field[x][y].setGrid(x,y);
+        this.field[row][col]= gem;
+        this.field[row][col].setGrid(row,col);
         this.addChild(gem); 
       }
     }
